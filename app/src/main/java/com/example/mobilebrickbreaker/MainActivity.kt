@@ -4,6 +4,8 @@ package com.example.mobilebrickbreaker
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -24,26 +26,20 @@ class MainActivity : AppCompatActivity() {
     private var ballX = 0f
     private var ballY = 0f
     private var ballSpeedX = 0f
-
     private var ballSpeedY = 0f
-
     private var paddleX = 0f
-
     private var score = 0
-
+    private var lives = 3
 
     private val brickRows = 9
-
     private val brickColumns = 10
     private val brickWidth = 100
     private val brickHeight = 40
     private val brickMargin = 4
-
     private var isBallLaunched = false
 
-    private var lives = 3
-
-
+    private lateinit var sharedPreferences: SharedPreferences
+    private val HIGH_SCORE_KEY = "high_score"
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,21 +51,23 @@ class MainActivity : AppCompatActivity() {
         ball = findViewById(R.id.ball)
         brickContainer = findViewById(R.id.brickContainer)
 
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        score = sharedPreferences.getInt(HIGH_SCORE_KEY, 0)
+        updateScore()
+
 
         val newgame = findViewById<Button>(R.id.newgame)
-
-
         newgame.setOnClickListener {
+            brickContainer.removeAllViews()
             initializeBricks()
             start()
-            //  movepaddle()
             newgame.visibility = View.INVISIBLE
-
-
         }
+    }
 
-
-
+    @SuppressLint("SetTextI18n")
+    private fun updateScore() {
+        scoreText.text = "Score: $score"
     }
 
     private fun initializeBricks() {
@@ -110,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         paddle.x = paddleX
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun checkCollision() {
         // Check collision with walls
         val screenWidth = resources.displayMetrics.widthPixels.toFloat()
@@ -173,37 +171,22 @@ class MainActivity : AppCompatActivity() {
         if (ballY + ball.height >= screenHeight - 100) {
             // Reduce the number of lives
             lives--
-
             if (lives > 0 ) {
                 Toast.makeText(this, "$lives balls left ", Toast.LENGTH_SHORT).show()
             }
-
-
             paddle.setOnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_MOVE -> {
                         movePaddle(event.rawX)
-
-
-
-
-
-
-
                     }
-
                 }
                 true
-
-
-
             }
 
             if (lives <= 0) {
-                // Game over condition: No more lives left
                 gameOver()
             } else {
-                // Reset the ball to its initial position
+
                 resetBallPosition()
                 start()
 
@@ -230,54 +213,38 @@ class MainActivity : AppCompatActivity() {
         ballSpeedX = 0 * screenDensity
         ballSpeedY = 0 * screenDensity
 
-
-
         paddleX = screenWidth / 2 - paddle.width / 2
         paddle.x = paddleX
-
-
         // Implement any additional logic you need, such as reducing lives or showing a message
         // when the ball goes past the paddle.
-
     }
 
+    @SuppressLint("SetTextI18n")
     private fun gameOver() {
-        // Display a game over message or perform other actions
         scoreText.text = "Game Over"
+        if (score > sharedPreferences.getInt(HIGH_SCORE_KEY, 0)) {
+            val editor = sharedPreferences.edit()
+            editor.putInt(HIGH_SCORE_KEY, score)
+            editor.apply()
+            Toast.makeText(this, "New High Score: $score", Toast.LENGTH_SHORT).show()
+        }
         score = 0
+        updateScore()
         val newgame = findViewById<Button>(R.id.newgame)
-
         newgame.visibility = View.VISIBLE
-
-
-
-
-        // Reset any other game-related properties as needed
     }
-
-
-
 
     @SuppressLint("ClickableViewAccessibility")
     private fun movepaddle() {
-
         paddle.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_MOVE -> {
                     movePaddle(event.rawX)
-
-
-
                 }
-
             }
             true
-
-
-
         }
     }
-
 
     private fun start() {
         movepaddle()
