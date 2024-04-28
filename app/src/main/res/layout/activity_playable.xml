@@ -1,0 +1,50 @@
+<!-- activity_playable.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".Playable">
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/score_0"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <View
+        android:id="@+id/paddle"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:background="#E8E8E8"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+    <View
+        android:id="@+id/ball"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/circle_background"
+        android:layout_above="@id/paddle"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:id="@+id/brickContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ball"
+        android:orientation="vertical"/>
+
+    <!-- Add your views here -->
+
+</RelativeLayout>
