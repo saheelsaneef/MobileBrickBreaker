@@ -2,6 +2,7 @@ package com.example.mobilebrickbreaker
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -48,7 +49,9 @@ class Playable:AppCompatActivity() {
         initializeBricks()
 
         start()
-
+        val sharedPreferences by lazy {
+            getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        }
     }
 
     private fun resetGame() {
@@ -71,7 +74,13 @@ class Playable:AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun updateScore() {
         scoreText.text = "Score: $score"
+        val highScore = SharedPreference.getHighScore(this)
+        if (score > highScore) {
+            SharedPreference.setHighScore(this, score)
+            Toast.makeText(this, "New High Score: $score", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun initializeBricks() {
         val brickWidthWithMargin = (brickWidth + brickMargin).toInt()
@@ -190,7 +199,6 @@ class Playable:AppCompatActivity() {
 
     }
 
-
     private fun resetBallPosition() {
         // Reset ball position logic
         // Similar to the existing code
@@ -198,18 +206,18 @@ class Playable:AppCompatActivity() {
 
     private fun gameOver() {
         // Game over logic
-        val highScore = SharedPreference.getHighScore()
+        val highScore = SharedPreference.getHighScore(this)
         if (score > highScore) {
-            SharedPreference.setHighScore(score)
+            SharedPreference.setHighScore(this, score)
             Toast.makeText(this, "New High Score: $score", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Score: $score", Toast.LENGTH_SHORT).show()
         }
+
         val newgame = findViewById<Button>(R.id.newgame)
         newgame.visibility = View.VISIBLE
         scoreText.text = "Game Over"
     }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun movepaddle() {
         paddle.setOnTouchListener { _, event ->
@@ -231,12 +239,6 @@ class Playable:AppCompatActivity() {
         movepaddle()
 
         resetBallPosition()
-        // Reset necessary variables to their initial state
-        score = 0
-
-
-        // Update the score text to display the current score (which is 0) and the lives count
-        updateScore()
 
         val displayMetrics = resources.displayMetrics
         val screenDensity = displayMetrics.density

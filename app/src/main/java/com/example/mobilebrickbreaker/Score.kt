@@ -1,11 +1,13 @@
 package com.example.mobilebrickbreaker
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
 class Score:AppCompatActivity() {
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.score_activity)
@@ -21,8 +23,8 @@ class Score:AppCompatActivity() {
         // Find the TextView in the layout and display the score
         val scoreTextView = findViewById<TextView>(R.id.scoreTextView)
 
-        scoreTextView.text = "Score: $score"
-        scoreTextView.text = "High Score: ${SharedPreference.getHighScore()}"
+//       scoreTextView.text = "Score: $score"
+        scoreTextView.text = "High Score: ${SharedPreference.getHighScore(this)}"
     }
 
     // Handle back button click

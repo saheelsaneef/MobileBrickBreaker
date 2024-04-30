@@ -24,8 +24,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        SharedPreference.init(this) // Initialize SharedPreference
-
         val scoreButton = findViewById<Button>(R.id.score)
         scoreButton.setOnClickListener {
             // Create an intent to navigate to the ScoreActivity
